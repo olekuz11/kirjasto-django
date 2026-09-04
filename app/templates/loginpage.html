@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Kirjaudu sisään</title>
+    <link rel="stylesheet" href="{% static 'app/style.css' %}">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Kirjaudu sisään</h1>
+
+        {% if error %}
+        <p style="color: #a94442;">{{ error }}</p>
+        {% endif %}
+
+        <form action="/login_action/" method="POST">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Käyttäjätunnus" required>
+            <input type="password" name="password" placeholder="Salasana" required>
+            <input type="submit" value="Kirjaudu">
+        </form>
+
+        <p class="back-link"><a href="/">Takaisin etusivulle</a></p>
+    </div>
+</body>
+</html>

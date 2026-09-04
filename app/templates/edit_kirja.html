@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Muokkaa kirjaa</title>
+    <link rel="stylesheet" href="{% static 'app/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Muokkaa kirjaa</h1>
+
+        <form action="/edit_kirja_post/{{ kirja.id }}/" method="POST">
+            {% csrf_token %}
+            <input type="text" name="nimi" value="{{ kirja.nimi }}" required>
+            <input type="text" name="genre" value="{{ kirja.genre }}" required>
+            <input type="number" name="julkaisuvuosi" value="{{ kirja.julkaisuvuosi }}" required>
+            <input type="number" name="sivut" value="{{ kirja.sivut }}" required>
+            <select name="kirjailija">
+                {% for kirjailija in kirjailijat %}
+                <option value="{{ kirjailija.id }}" {% if kirjailija.id == kirja.kirjailija.id %}selected{% endif %}>
+                    {{ kirjailija.etunimi }} {{ kirjailija.sukunimi }}
+                </option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Tallenna">
+        </form>
+
+        <p><a href="/">Takaisin luetteloon</a></p>
+    </div>
+</body>
+</html>

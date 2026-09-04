@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lainat</title>
+    <link rel="stylesheet" href="{% static 'app/style.css' %}">
+</head>
+<body>
+    <div class="container">
+
+        <nav class="topnav">
+            <a href="/">Etusivu</a>
+            <a href="/kirjat/">Kirjat</a>
+            <a href="/lainat/">Lainat</a>
+        </nav>
+        
+        <h1>Lainat</h1>
+
+        {% if user.is_authenticated %}
+        <p class="userbar">Kirjautunut sisään: <strong>{{ user.username }}</strong> | <a href="/logout/">Kirjaudu ulos</a></p>
+        {% else %}
+        <p class="userbar"><a href="/login/">Kirjaudu sisään</a> hallitaksesi lainoja</p>
+        {% endif %}
+
+        <table>
+            <tr>
+                <th>Kirja</th>
+                <th>Lainaaja</th>
+                <th>Lainauspäivä</th>
+                <th>Status</th>
+                {% if user.is_authenticated %}
+                <th>Muuta statusta</th>
+                {% endif %}
+            </tr>
+            {% for laina in lainat %}
+            <tr>
+                <td>{{ laina.kirja.nimi }}</td>
+                <td>{{ laina.lainaaja }}</td>
+                <td>{{ laina.lainauspaiva }}</td>
+                <td>{{ laina.get_status_display }}</td>
+                {% if user.is_authenticated %}
+                <td>
+                    <form action="/update_laina/{{ laina.id }}/" method="POST" style="margin:0;">
+                        {% csrf_token %}
+                        <select name="status" onchange="this.form.submit()">
+                            <option value="varattu" {% if laina.status == 'varattu' %}selected{% endif %}>Varattu</option>
+                            <option value="lainassa" {% if laina.status == 'lainassa' %}selected{% endif %}>Lainassa</option>
+                            <option value="palautettu" {% if laina.status == 'palautettu' %}selected{% endif %}>Palautettu</option>
+                        </select>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% if user.is_authenticated %}
+        <h2>Lisää uusi laina</h2>
+        <form action="/addlaina/" method="POST">
+            {% csrf_token %}
+            <select name="kirja">
+                {% for kirja in kirjat %}
+                <option value="{{ kirja.id }}">{{ kirja.nimi }}</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="lainaaja" placeholder="Lainaajan nimi" required>
+            <input type="submit" value="Lisää laina">
+        </form>
+        {% endif %}
+    </div>
+</body>
+</html>

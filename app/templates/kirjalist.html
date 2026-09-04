@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Kirjat</title>
+    <link rel="stylesheet" href="{% static 'app/style.css' %}">
+</head>
+<body>
+    <div class="container">
+
+        <nav class="topnav">
+            <a href="/">Etusivu</a>
+            <a href="/kirjat/">Kirjat</a>
+            <a href="/lainat/">Lainat</a>
+        </nav>
+
+        <h1>Kirjaluettelo</h1>
+
+        {% if user.is_authenticated %}
+        <p class="userbar">Kirjautunut sisään: <strong>{{ user.username }}</strong> | <a href="/logout/">Kirjaudu ulos</a></p>
+        {% else %}
+        <p class="userbar"><a href="/login/">Kirjaudu sisään</a> hallitaksesi kirjoja</p>
+        {% endif %}
+
+        <table>
+            <tr>
+                <th>Nimi</th>
+                <th>Kirjailija</th>
+                <th>Genre</th>
+                <th>Julkaisuvuosi</th>
+                <th>Sivut</th>
+                {% if user.is_authenticated %}
+                <th>Muokkaa</th>
+                <th>Poista</th>
+                {% endif %}
+            </tr>
+            {% for kirja in kirjat %}
+            <tr>
+                <td>{{ kirja.nimi }}</td>
+                <td>{{ kirja.kirjailija.etunimi }} {{ kirja.kirjailija.sukunimi }}</td>
+                <td>{{ kirja.genre }}</td>
+                <td>{{ kirja.julkaisuvuosi }}</td>
+                <td>{{ kirja.sivut }}</td>
+                {% if user.is_authenticated %}
+                <td><a href="/edit_kirja/{{ kirja.id }}/">Muokkaa</a></td>
+                <td><a class="delete-link" href="/deletekirja/{{ kirja.id }}/" onclick="return confirm('Haluatko varmasti poistaa kirjan: {{ kirja.nimi }}?')">Poista</a></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
+
+        {% if user.is_authenticated %}
+        <h2>Lisää uusi kirja</h2>
+        <form action="/addkirja/" method="POST">
+            {% csrf_token %}
+            <input type="text" name="nimi" placeholder="Nimi" required>
+            <input type="text" name="genre" placeholder="Genre" required>
+            <input type="number" name="julkaisuvuosi" placeholder="Julkaisuvuosi" required>
+            <input type="number" name="sivut" placeholder="Sivut" required>
+            <select name="kirjailija">
+                {% for kirjailija in kirjailijat %}
+                <option value="{{ kirjailija.id }}">{{ kirjailija.etunimi }} {{ kirjailija.sukunimi }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Lisää">
+        </form>
+        {% endif %}
+    </div>
+</body>
+</html>

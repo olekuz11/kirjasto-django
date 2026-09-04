@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <title>Kirjasto</title>
+    <link rel="stylesheet" href="{% static 'app/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1>Tervetuloa Kirjastoon</h1>
+        <p>Tämä on yksinkertainen kirjaston hallintasovellus. Voit selata kirjoja ja niiden tekijöitä sekä seurata lainoja.</p>
+
+        <div class="nav-links">
+            <a href="/kirjat/">Selaa kirjoja</a>
+            <a href="/lainat/">Katso lainat</a>
+            {% if user.is_authenticated %}
+            <a href="/logout/">Kirjaudu ulos</a>
+            {% else %}
+            <a href="/login/">Kirjaudu sisään</a>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
